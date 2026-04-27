@@ -12,10 +12,12 @@
     <h1>Мои задачи</h1>
     <ul>
         {% for task in tasks %}
-        <li>
-            {{ task.text }} ({{ task.date }})
-            <a href="/delete/{{ loop.index0 }}">Удалить</a>
-        </li>
+            <li>
+                <li>
+                {{ task.text }} — <small>{{ task.date }}</small>
+                <a href="/edit/{{ loop.index0 }}"> Редактировать</a>
+                <a href="/delete/{{ loop.index0 }}"> Удалить</a>
+            </li>
         {% endfor %}
     </ul>
 

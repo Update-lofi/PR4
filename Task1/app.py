@@ -56,7 +56,7 @@ def edit_task(task_id):
         # то возвращаем сообщение об ошибке и HTTP-статус 404 (Not Found).
 
     if request.method == 'POST':
-        new_text = request.form.get('task', '').strip() )
+        new_text = request.form.get('task', '').strip()
 
 # Проверка на пустое поле
         if new_text == '':

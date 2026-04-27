@@ -47,48 +47,33 @@ def clear_all_tasks():
     save_tasks(tasks)
     return redirect('/')
 
+# ✅ ЕДИНСТВЕННЫЙ И РАБОЧИЙ МАРШРУТ РЕДАКТИРОВАНИЯ
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 def edit_task(task_id):
-    # функция получает номер (индекс) редактируемой задачи.
     if task_id < 0 or task_id >= len(tasks):
-        # Проверка: если индекс отрицательный или выходит за границы списка задач,
         return "Задача не найдена", 404
-        # то возвращаем сообщение об ошибке и HTTP-статус 404 (Not Found).
 
     if request.method == 'POST':
         new_text = request.form.get('task', '').strip()
+        
+        # 🔽 ЗАДАНИЕ: запоминаем исходный текст задачи
+        old_text = tasks[task_id]['text']
 
-# Проверка на пустое поле
-        if new_text == '':
-            return render_template('edit.html', task=task, message="Текст не может быть пустым!")
+        # Проверка на пустое поле
+        if not new_text:
+            return render_template('edit.html', task=tasks[task_id], message="Текст не может быть пустым!")
 
-        # Если метод запроса POST (пользователь отправил форму с изменениями)...
+        # 🔽 ЗАДАНИЕ: если текст не изменился, возвращаем сообщение
+        if new_text == old_text:
+            return render_template('edit.html', task=tasks[task_id], message="Ничего не изменено")
 
-        new_text = request.form.get('task', '').strip()
-        # Из данных формы извлекаем значение поля с именем 'task'.
-        # .get() возвращает '' если поля нет (безопаснее, чем прямая индексация).
-        # .strip() удаляет лишние пробелы в начале и конце строки.
-
-        if new_text:
-            # Если после удаления пробелов строка не пуста...
-
-            tasks[task_id]['text'] = new_text
-            # Обращаемся к задаче по индексу (это словарь) и обновляем её ключ 'text' новым текстом.
-            # Важно: мы не заменяем весь словарь           
-# а меняем только одно поле. Остальные поля (например, 'date') остаются нетронутыми.
-
-            save_tasks(tasks)
-            # Сохраняем обновлённый список задач в файл JSON.
-
+        # Сохраняем новый текст и перенаправляем на главную
+        tasks[task_id]['text'] = new_text
+        save_tasks(tasks)
         return redirect('/')
-        # Перенаправляем пользователя на главную страницу (список задач).
 
-    else:
-        # Иначе (если метод GET — пользователь только перешёл по ссылке "Редактировать")...
-
-        return render_template('edit.html', task=tasks[task_id])
-        # Отображаем шаблон edit.html, передавая в него словарь задачи (task).
-
+    # GET-запрос: просто открываем форму редактирования
+    return render_template('edit.html', task=tasks[task_id])
 
 if __name__ == '__main__':
     app.run(debug=True)
